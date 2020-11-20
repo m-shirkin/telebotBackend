@@ -2,15 +2,20 @@ import {NestFactory} from '@nestjs/core';
 import {DocumentBuilder, SwaggerModule} from '@nestjs/swagger';
 import {AppModule} from "./app.module";
 import {SwaggerOptions, ApiUrlOptions} from "../config";
+import {text as bodyParserText} from "body-parser";
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create(AppModule);
-    let apiUrlOptions = app.get(ApiUrlOptions);
-    let swaggerOptions = app.get(SwaggerOptions);
 
+    const apiUrlOptions = app.get(ApiUrlOptions);
     app.setGlobalPrefix(apiUrlOptions.prefix);
 
+    //Use parser for text/plain requests
+    app.use(bodyParserText());
+
     //Swagger OpenAPI setup
+    const swaggerOptions = app.get(SwaggerOptions);
+
     const options = new DocumentBuilder()
         .setTitle(swaggerOptions.title)
         .setDescription(swaggerOptions.description)

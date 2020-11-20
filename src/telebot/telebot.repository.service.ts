@@ -3,6 +3,7 @@ import {MessageEntity} from "../entity/message.entity";
 import {UserEntity} from "../entity/user.entity";
 import {ApiUrlOptions} from "../../config";
 import {zip} from "rxjs";
+import {Message} from 'telegraf/typings/telegram-types'
 
 interface MessageData {
     msg: MessageEntity,
@@ -16,16 +17,16 @@ export class TelebotRepository {
         private httpService: HttpService,
     ) {}
 
-    convertToEntities(message: any): MessageData {
+    convertToEntities(message: Message): MessageData {
         let msg: MessageEntity = {
-            message_id: message.message_id || '',
-            from_user_id: message.from.id || '',
-            date: message.date || '',
+            message_id: message.message_id.toString() || '',
+            from_user_id: message.from.id.toString() || '',
+            date: message.date.toString() || '',
             text: message.text || '',
             raw_json: JSON.stringify(message) || '{}',
         };
         let usr: UserEntity = {
-            user_id: message.from.id || '',
+            user_id: message.from.id.toString() || '',
             first_name: message.from.first_name || '',
             last_name: message.from.last_name || '',
             username: message.from.username || '',
@@ -37,7 +38,7 @@ export class TelebotRepository {
         }
     }
 
-    async sendData(message: any): Promise<void> {
+    async sendData(message: Message): Promise<void> {
         let data: MessageData = this.convertToEntities(message);
         let usrPost = this.httpService.post(
             this.apiUrlOptions.apiUrl + '/users',

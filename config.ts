@@ -18,8 +18,8 @@ export class ApiUrlOptions {
 
 @Injectable()
 export class SwaggerOptions {
-    readonly title = 'Message database API';
-    readonly description = 'API for storing and retrieving telegram users and messages';
+    readonly title = 'Telebot API';
+    readonly description = 'API for managing bot';
     readonly version = '1.0';
 }
 

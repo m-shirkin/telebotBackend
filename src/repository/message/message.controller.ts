@@ -1,6 +1,6 @@
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
-import {ApiTags} from "@nestjs/swagger";
+import {ApiOperation, ApiTags} from "@nestjs/swagger";
 import {Body, Controller, Get, Param, ParseIntPipe, Post, Query} from "@nestjs/common";
 import {MessageEntity} from "../../entity/message.entity";
 
@@ -12,9 +12,13 @@ export class MessageController {
         private readonly messageRepository: Repository<MessageEntity>
     ) {}
 
-    //Get a single message
+    @ApiOperation({
+        description: 'Get a single message',
+    })
     @Get(':id')
-    async getOne(@Param('id', ParseIntPipe) id: number): Promise<MessageEntity> {
+    async getOne(
+        @Param('id', ParseIntPipe) id: number
+    ): Promise<MessageEntity> {
         return (await this.messageRepository
             .find({
                 skip: id,
@@ -22,7 +26,9 @@ export class MessageController {
             }))[0];
     }
 
-    //Get 'size' messages, skipping first 'offset'
+    @ApiOperation({
+        description: 'Get *size* messages, skipping first *offset*',
+    })
     @Get()
     async getMany(
         @Query('offset', ParseIntPipe) offset: number,
@@ -35,7 +41,9 @@ export class MessageController {
             });
     }
 
-    //Get message by its message_id
+    @ApiOperation({
+        description: 'Get message by its message_id',
+    })
     @Get()
     async getByMid(
         @Query('mid') mid: string,
@@ -48,7 +56,9 @@ export class MessageController {
             });
     }
 
-    //Add one message to the database
+    @ApiOperation({
+        description: 'Add one message to the database',
+    })
     @Post()
     async addOne(
         @Body() newMessage: MessageEntity

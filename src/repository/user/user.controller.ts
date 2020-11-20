@@ -2,7 +2,7 @@ import {Body, Controller, Get, Param, ParseIntPipe, Post, Query} from "@nestjs/c
 import {UserEntity} from "../../entity/user.entity";
 import {InjectRepository} from "@nestjs/typeorm";
 import {Repository} from "typeorm";
-import {ApiTags} from "@nestjs/swagger";
+import {ApiOperation, ApiTags} from "@nestjs/swagger";
 
 @ApiTags('Users')
 @Controller('users')
@@ -12,9 +12,13 @@ export class UserController {
         private readonly userRepository: Repository<UserEntity>
     ) {}
 
-    //Get a single user
+    @ApiOperation({
+        description: 'Get a single user',
+    })
     @Get(':id')
-    async getOne(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
+    async getOne(
+        @Param('id', ParseIntPipe) id: number
+    ): Promise<UserEntity> {
         return (await this.userRepository
             .find({
                 skip: id,
@@ -22,7 +26,9 @@ export class UserController {
             }))[0];
     }
 
-    //Get 'size' users, skipping first 'offset'
+    @ApiOperation({
+        description: 'Get *size* users, skipping first *offset*',
+    })
     @Get()
     async getMany(
         @Query('offset', ParseIntPipe) offset: number,
@@ -35,7 +41,9 @@ export class UserController {
             });
     }
 
-    //Get user by his user_id
+    @ApiOperation({
+        description: 'Get user by his user_id',
+    })
     @Get()
     async getByUid(
         @Query('uid') uid: string,
@@ -48,7 +56,9 @@ export class UserController {
             });
     }
 
-    //Add one user to the database
+    @ApiOperation({
+        description: 'Add one user to the database',
+    })
     @Post()
     async addOne(
         @Body() newUser: UserEntity
