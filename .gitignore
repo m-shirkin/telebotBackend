@@ -35,3 +35,6 @@ lerna-debug.log*
 
 # telegram API bot token
 /src/telebot/token.ts
+
+/scripts/
+/database.db

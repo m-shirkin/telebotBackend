@@ -6,6 +6,9 @@ import {text as bodyParserText} from "body-parser";
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create(AppModule);
+    app.enableCors({
+        origin: "*",
+    });
 
     const apiUrlOptions = app.get(ApiUrlOptions);
     app.setGlobalPrefix(apiUrlOptions.prefix);
