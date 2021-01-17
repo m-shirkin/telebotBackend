@@ -1,10 +1,11 @@
 import {Observable, Subject} from "rxjs";
-import Telegraf from 'telegraf';
+import {Telegraf} from 'telegraf';
 import {Message} from "telegraf/typings/telegram-types";
 import {TelegrafContext} from "telegraf/typings/context";
 import {Injectable} from "@nestjs/common";
+import * as ts from 'typescript';
 
-//Service returns observable, which all incoming messages go through
+//Service returns observable with all incoming messages
 @Injectable()
 export class TelegrafTemplate {
     loop(bot: Telegraf<TelegrafContext>, code: string): Observable<Message> {
@@ -15,7 +16,8 @@ export class TelegrafTemplate {
             await next();
         })
 
-        eval(code);
+        let jsCode = ts.transpile(code);
+        eval(jsCode);
 
         bot.launch().catch((error) => console.error(error));
 

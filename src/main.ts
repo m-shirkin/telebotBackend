@@ -6,6 +6,8 @@ import {text as bodyParserText} from "body-parser";
 
 async function bootstrap(): Promise<void> {
     const app = await NestFactory.create(AppModule);
+
+    //Enable CORS to any address
     app.enableCors({
         origin: "*",
     });

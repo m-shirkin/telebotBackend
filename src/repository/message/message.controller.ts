@@ -13,6 +13,14 @@ export class MessageController {
     ) {}
 
     @ApiOperation({
+        description: 'Get total number of messages in the database',
+    })
+    @Get('size')
+    async getSize(): Promise<number> {
+        return this.messageRepository.count();
+    }
+
+    @ApiOperation({
         description: 'Get a single message',
     })
     @Get(':id')
@@ -33,12 +41,30 @@ export class MessageController {
     async getMany(
         @Query('offset', ParseIntPipe) offset: number,
         @Query('size', ParseIntPipe) size: number,
+        @Query('sort') sort: string,
     ): Promise<MessageEntity[]> {
-        return this.messageRepository
-            .find({
-                skip: offset,
-                take: size
-            });
+        if (sort) {
+            let sort_params = sort.split(',');
+            let order: {
+                [field in keyof MessageEntity]?: "ASC" | "DESC" | 1 | -1;
+            } = {};
+            for (let sort_field of sort_params) {
+                let sort_instance = sort_field.split(':');
+                order[sort_instance[0]] = sort_instance[1].toUpperCase() || 'ASC';
+            }
+            return this.messageRepository
+                .find({
+                    skip: offset,
+                    take: size,
+                    order: order,
+                });
+        } else {
+            return this.messageRepository
+                .find({
+                    skip: offset,
+                    take: size,
+                });
+        }
     }
 
     @ApiOperation({
