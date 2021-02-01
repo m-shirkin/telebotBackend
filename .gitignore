@@ -33,8 +33,5 @@ lerna-debug.log*
 !.vscode/launch.json
 !.vscode/extensions.json
 
-# telegram API bot token
-/src/telebot/token.ts
-
 /scripts/
 /database.db

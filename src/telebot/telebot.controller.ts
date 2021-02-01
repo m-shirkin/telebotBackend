@@ -1,8 +1,7 @@
-import {Body, Controller, Get, HttpException, HttpStatus, Post} from "@nestjs/common";
+import {Body, Controller, Get, HttpException, HttpStatus, Inject, Post} from "@nestjs/common";
 import {Telegraf} from "telegraf";
 import {TelegrafContext} from "telegraf/typings/context";
 import {Message} from "telegraf/typings/telegram-types"
-import token from './token'
 import {TelebotRepository} from "./telebot.repository.service";
 import {TelebotOptions} from "../../config";
 import {TelegrafTemplate} from "./telegraf.template";
@@ -16,8 +15,11 @@ export class TelebotController {
         private telebotRepository: TelebotRepository,
         private telebotOptions: TelebotOptions,
         private telegrafTemplate: TelegrafTemplate,
+        @Inject('TELEGRAM_TOKEN') private token: string,
     ) {
-        this.resetBot();
+        this.resetBot().catch((reason: any) => {
+            throw new Error(reason);
+        });
     }
 
     private telegrafBot: Telegraf<TelegrafContext>;
@@ -26,13 +28,16 @@ export class TelebotController {
 
     private async runCode(scriptCode: string): Promise<void> {
         this.telegrafBusy = true;
-        if (this.telegrafBot) {
-            await this.telegrafBot.stop();
-        }
-        this.telegrafBot = new Telegraf<TelegrafContext>(token);
-        let messageObservable = this.telegrafTemplate.loop(this.telegrafBot, scriptCode);
-        messageObservable.subscribe((msg: Message) => this.telebotRepository.sendData(msg));
-        this.telegrafBusy = false;
+        await (async () => {
+            if (this.telegrafBot) {
+                await this.telegrafBot.stop();
+            }
+            this.telegrafBot = new Telegraf<TelegrafContext>(this.token);
+            let messageObservable = this.telegrafTemplate.loop(this.telegrafBot, scriptCode);
+            messageObservable.subscribe((msg: Message) => this.telebotRepository.sendData(msg));
+        })().finally(() => {
+            this.telegrafBusy = false;
+        });
     }
 
     @ApiConsumes('text/plain')
