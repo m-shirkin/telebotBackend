@@ -6,7 +6,9 @@ import * as fs from 'fs';
 @ApiTags('Bot files')
 @Controller('telebot')
 export class TelebotFileController {
-    constructor(private telebotOptions: TelebotOptions) {}
+    constructor(private telebotOptions: TelebotOptions) {
+        fs.mkdir(this.telebotOptions.scriptFolder, _=>{});
+    }
 
     @ApiOperation({
         description: 'Get list of all bot script files'
