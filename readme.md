@@ -1,6 +1,6 @@
 # Telebot Backend
 
-This project is a web-server for running Telegram bot files. It also maintains a local database with messages that the bot received. It was created on Node.js using [NestJS](https://nestjs.com/) framework.
+This project is a web-server for running Telegram bot files. It also maintains a local database with messages that the bot received. It was developed on Node.js using [NestJS](https://nestjs.com/) framework.
 
 To view the API go to `https://*server-address*:3000/api`
 
